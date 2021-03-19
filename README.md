@@ -30,5 +30,6 @@ curl -X POST \
 8. Bài 8: Logging Requests on Console
    http://polyglot.ninja/koajs-mongodb-rest-api/
    
-
+9. Bài 9: RESTful routes and use MongoDB CRUD operations
+   http://polyglot.ninja/rest-api-koajs-and-mongodb-part-2/
 
