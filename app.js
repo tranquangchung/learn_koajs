@@ -4,13 +4,22 @@ const KoaRouter = require('koa-router');
 const router = new KoaRouter();
 const app = new Koa();
 
-router.get('/', (ctx, next) => {
-    ctx.body = "Nothing";
-});
+// router.get('/', (ctx, next) => {
+//     ctx.body = "Nothing";
+// });
+//
+// router.get('/hello', (ctx, next) => {
+//     ctx.body = "Hello world";
+// });
+router
+    .get('/', (ctx, next) => {
+        ctx.body = 'Hello World!';
+    })
+    .get('/users/:id', (ctx, next) => {
+        // ...
+        ctx.body = 'users ' + ctx.params.id;
+    });
 
-router.get('/hello', (ctx, next) => {
-    ctx.body = "Hello world";
-});
 
 // Router Middleware
 app.use(router.routes()).use(router.allowedMethods());
