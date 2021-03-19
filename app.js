@@ -1,24 +1,27 @@
 const Koa = require('koa');
 const KoaRouter = require('koa-router');
+const BodyParser = require("koa-bodyparser");
 
 const router = new KoaRouter();
 const app = new Koa();
 
-// router.get('/', (ctx, next) => {
-//     ctx.body = "Nothing";
-// });
-//
-// router.get('/hello', (ctx, next) => {
-//     ctx.body = "Hello world";
-// });
+// Use the bodyparser middlware
+app.use(BodyParser());
+
 router
     .get('/', (ctx, next) => {
-        ctx.body = 'Hello World!';
+        // http://localhost:3000/?name=masnun
+        let name = ctx.request.query.name || "World";
+        ctx.body = {message: `Hello ${name}!`}
     })
     .get('/users/:id', (ctx, next) => {
         // ...
         ctx.body = 'users ' + ctx.params.id;
-    });
+    })
+    .post("/post", async function (ctx) {
+    let name = ctx.request.body.name || "World";
+    ctx.body = {message: `Hello ${name}!`}
+});
 
 
 // Router Middleware
