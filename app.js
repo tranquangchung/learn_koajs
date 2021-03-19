@@ -1,33 +1,18 @@
 const Koa = require('koa');
+const KoaRouter = require('koa-router');
+
+const router = new KoaRouter();
 const app = new Koa();
-const compose = require('koa-compose');
 
-async function random(ctx, next) {
-    if ('/random' == ctx.path) {
-        ctx.body = Math.floor(Math.random() * 10);
-    } else {
-        await next();
-    }
-};
+router.get('/', (ctx, next) => {
+    ctx.body = "Nothing";
+});
 
-async function backwards(ctx, next) {
-    if ('/backwards' == ctx.path) {
-        ctx.body = 'sdrawkcab';
-    } else {
-        await next();
-    }
-}
+router.get('/hello', (ctx, next) => {
+    ctx.body = "Hello world";
+});
 
-async function pi(ctx, next) {
-    if ('/pi' == ctx.path) {
-        ctx.body = String(Math.PI);
-    } else {
-        await next();
-    }
-}
-
-const all = compose([random, backwards, pi]);
-
-app.use(all);
+// Router Middleware
+app.use(router.routes()).use(router.allowedMethods());
 
 app.listen(3000);
