@@ -1,12 +1,14 @@
 const Koa = require('koa');
 const KoaRouter = require('koa-router');
 const BodyParser = require("koa-bodyparser");
+const logger = require('koa-logger');
 
 const router = new KoaRouter();
 const app = new Koa();
 
 // Use the bodyparser middlware
 app.use(BodyParser());
+app.use(logger());
 
 router
     .get('/', (ctx, next) => {
