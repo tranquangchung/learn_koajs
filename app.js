@@ -1,27 +1,33 @@
 const Koa = require('koa');
 const app = new Koa();
+const compose = require('koa-compose');
 
-// x-response time
-app.use( async (ctx, next) => {
-    const start = Date.now();
-    await next();
-    const ms = Date.now() - start;
-    ctx.set('X-Response-Time', `${ms}ms`);
+async function random(ctx, next) {
+    if ('/random' == ctx.path) {
+        ctx.body = Math.floor(Math.random() * 10);
+    } else {
+        await next();
     }
-)
+};
 
-//logger
-app.use(async (ctx, next) =>{
-    const start = Date.now();
-    await next();
-    const ms = Date.now() - start;
-    console.log(`${ctx.method} ${ctx.url} - ${ms}`);
-})
+async function backwards(ctx, next) {
+    if ('/backwards' == ctx.path) {
+        ctx.body = 'sdrawkcab';
+    } else {
+        await next();
+    }
+}
 
-//response
-app.use(async (ctx, next) =>{
-    await next();
-    ctx.body = 'Hello World';
-})
+async function pi(ctx, next) {
+    if ('/pi' == ctx.path) {
+        ctx.body = String(Math.PI);
+    } else {
+        await next();
+    }
+}
+
+const all = compose([random, backwards, pi]);
+
+app.use(all);
 
 app.listen(3000);
