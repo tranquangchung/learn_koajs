@@ -27,3 +27,8 @@ curl -X POST \
   -H 'content-type: application/json' \
   -d '{"name": "tran quang chung"}'
 ```
+8. Bài 8: Logging Requests on Console
+   http://polyglot.ninja/koajs-mongodb-rest-api/
+   
+
+
