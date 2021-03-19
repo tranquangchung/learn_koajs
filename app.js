@@ -1,16 +1,12 @@
 const Koa = require('koa');
 const app = new Koa();
 
-const fs = require('mz/fs');
+async function responseTime(ctx, next) {
+    const start = Date.now();
+    await next();
+    const ms = Date.now() - start;
+    ctx.set('X-Response-Time', `${ms}ms`);
+}
 
-app.use(async function (ctx, next) {
-    const paths = await fs.readdir('docs');
-    const files = await Promise.all(paths.map(path => fs.readFile(`docs/${path}`, 'utf8')));
-
-    ctx.type = 'markdown';
-    ctx.body = files.join('');
-});
-
+app.use(responseTime);
 app.listen(3000);
-
-
