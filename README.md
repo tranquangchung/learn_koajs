@@ -33,3 +33,6 @@ curl -X POST \
 9. Bài 9: RESTful routes and use MongoDB CRUD operations
    http://polyglot.ninja/rest-api-koajs-and-mongodb-part-2/
 
+10. Bài 10: JWT with KoaJS
+    http://polyglot.ninja/rest-api-koajs-mongodb-part-3/
+    
