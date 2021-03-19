@@ -2,10 +2,21 @@ const Koa = require('koa');
 const KoaRouter = require('koa-router');
 const BodyParser = require("koa-bodyparser");
 const logger = require('koa-logger');
+const render = require("koa-ejs");
+const axios = require("axios");
+const path = require("path");
+
 
 const router = new KoaRouter();
 const securedRouter = new KoaRouter();
 const app = new Koa();
+
+render(app, {
+    root: path.join(__dirname, "views"),
+    layout: "index",
+    viewExt: "html",
+});
+
 
 require("./mongo")(app);
 const ObjectID = require("mongodb").ObjectID;
@@ -46,6 +57,14 @@ router.post("/auth", async (ctx) => {
         ctx.status = 401;
         ctx.body = {error: "Invalid login"}
     }
+});
+
+router.get("users", "/users", async (ctx) => {
+    const result = await axios.get("https://randomuser.me/api?results=5");
+
+    return ctx.render("index", {
+        users: result.data.results,
+    });
 });
 
 // Apply JWT middleware to secured router only
