@@ -37,3 +37,14 @@ curl -X POST \
     http://polyglot.ninja/rest-api-koajs-mongodb-part-3/
     
 11. Bài 11: Sử dụng template html và axios để kết nối server
+
+12. Bài 12: Sử dụng `mongoose` tạo `Schema` và `Model` theo kiểu `Object Data Modeling (ODM)`
+    https://mongoosejs.com/docs/
+    
+ ```shell
+ curl -X POST \
+   http://localhost:3000/kitten \
+   -H 'cache-control: no-cache' \
+   -H 'content-type: application/json' \
+   -d '{"name": "doremon"}'
+ ```

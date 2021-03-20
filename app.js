@@ -5,7 +5,7 @@ const logger = require('koa-logger');
 const render = require("koa-ejs");
 const axios = require("axios");
 const path = require("path");
-
+const KittenModel = require("./mongo_connection");
 
 const router = new KoaRouter();
 const securedRouter = new KoaRouter();
@@ -18,14 +18,9 @@ render(app, {
 });
 
 
-require("./mongo")(app);
-const ObjectID = require("mongodb").ObjectID;
-// Use the bodyparser middlware
 app.use(BodyParser());
 app.use(logger());
-// app.use(require("./jwt"));
 const jwt = require("./jwt");
-// app.use(jwt.errorHandler()).use(jwt.jwt());
 
 router
     .get('/', (ctx, next) => {
@@ -67,6 +62,18 @@ router.get("users", "/users", async (ctx) => {
     });
 });
 
+// get kitten
+router.get("/kitten", async (ctx) => {
+    ctx.body = await KittenModel.find();
+});
+
+// Create new kitten
+router.post("/kitten", async (ctx) => {
+    let model = new KittenModel(ctx.request.body);
+    ctx.body = await model.save();
+});
+
+
 // Apply JWT middleware to secured router only
 securedRouter.use(jwt.errorHandler()).use(jwt.jwt());
 
@@ -80,23 +87,6 @@ securedRouter.post("/people", async (ctx) => {
     ctx.body = await ctx.app.people.insert(ctx.request.body);
 });
 
-// Get one
-securedRouter.get("/people/:id", async (ctx) => {
-    ctx.body = await ctx.app.people.findOne({"_id": ObjectID(ctx.params.id)});
-});
-
-// Update one
-securedRouter.put("/people/:id", async (ctx) => {
-    let documentQuery = {"_id": ObjectID(ctx.params.id)}; // Used to find the document
-    let valuesToUpdate = ctx.request.body;
-    ctx.body = await ctx.app.people.updateOne(documentQuery, valuesToUpdate);
-});
-
-// Delete one
-securedRouter.delete("/people/:id", async (ctx) => {
-    let documentQuery = {"_id": ObjectID(ctx.params.id)}; // Used to find the document
-    ctx.body = await ctx.app.people.deleteOne(documentQuery);
-});
 
 // Router Middleware
 app.use(router.routes()).use(router.allowedMethods());
