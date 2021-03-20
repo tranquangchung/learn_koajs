@@ -8,12 +8,24 @@ const path = require("path");
 const KittenModel = require("./mongo_connection");
 const UserModel = require("./user_model");
 const AdminBro = require('admin-bro');
-const AdminBroMongoose = require('@admin-bro/mongoose')
-AdminBro.registerAdapter(AdminBroMongoose)
-const passwordFeature = require('@admin-bro/passwords')
-const argon2 = require('argon2')
+const AdminBroMongoose = require('@admin-bro/mongoose');
+AdminBro.registerAdapter(AdminBroMongoose);
+const passwordFeature = require('@admin-bro/passwords');
+const argon2 = require('argon2');
+const agenda = require('./agendaJS');
+
+var i_run = 0;
+agenda.define('console log', function(job, done) {
+    console.log('Agenda successfully worked ' + i_run);
+    i_run += 1;
+    done();
+});
 
 
+(async function() {
+    await agenda.start();
+    await agenda.schedule('10 seconds', 'console log');
+})();
 
 const { buildRouter, buildAuthenticatedRouter } = require('@admin-bro/koa');
 // const adminBro = new AdminBro({

@@ -15,6 +15,7 @@
     "@admin-bro/passwords": "^1.0.3",
     "@koa/router": "^10.0.0",
     "admin-bro": "^3.4.0",
+    "agenda": "^4.1.0",
     "argon2": "^0.27.1",
     "axios": "^0.21.1",
     "jsonwebtoken": "^8.5.1",
