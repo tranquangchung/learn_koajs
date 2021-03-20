@@ -48,3 +48,7 @@ curl -X POST \
    -H 'content-type: application/json' \
    -d '{"name": "doremon"}'
  ```
+13. Bài 13: Admin page, Password hashing, Authentication
+    https://itnext.io/koa-just-got-a-beautiful-auto-generated-admin-panel-f5f89d83e892
+    
+

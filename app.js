@@ -6,6 +6,34 @@ const render = require("koa-ejs");
 const axios = require("axios");
 const path = require("path");
 const KittenModel = require("./mongo_connection");
+const UserModel = require("./user_model");
+const AdminBro = require('admin-bro');
+const AdminBroMongoose = require('@admin-bro/mongoose')
+AdminBro.registerAdapter(AdminBroMongoose)
+const passwordFeature = require('@admin-bro/passwords')
+const argon2 = require('argon2')
+
+
+
+const { buildRouter, buildAuthenticatedRouter } = require('@admin-bro/koa');
+// const adminBro = new AdminBro({
+//     resources: [UserModel],
+//     rootPath: '/admin',
+// })
+const adminBro = new AdminBro({
+    resources: [{
+        resource: UserModel,
+        options: {
+            properties: { encryptedPassword: { isVisible: false } },
+        },
+        features: [passwordFeature({
+            properties: { encryptedPassword: 'encryptedPassword' },
+            hash: argon2.hash,
+        })]
+    }],
+    rootPath: '/admin',
+})
+
 
 const router = new KoaRouter();
 const securedRouter = new KoaRouter();
@@ -16,6 +44,19 @@ render(app, {
     layout: "index",
     viewExt: "html",
 });
+
+const routerAdmin = buildRouter(adminBro, app)
+// app.keys = ['super-secret1', 'super-secret2']
+// const routerAdmin = buildAuthenticatedRouter(adminBro, app, {
+//     authenticate: async (email, password) => {
+//         console.log(email, password);
+//         const user = email && await UserModel.findOne({ email })
+//         if (password && user && await argon2.verify(user.encryptedPassword, password)){
+//             return user.toJSON()
+//         }
+//         return null
+//     },
+// })
 
 
 app.use(BodyParser());
@@ -91,5 +132,5 @@ securedRouter.post("/people", async (ctx) => {
 // Router Middleware
 app.use(router.routes()).use(router.allowedMethods());
 app.use(securedRouter.routes()).use(securedRouter.allowedMethods());
-
+app.use(routerAdmin.routes()).use(routerAdmin.allowedMethods());
 app.listen(3000);
