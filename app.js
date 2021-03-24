@@ -13,19 +13,21 @@ AdminBro.registerAdapter(AdminBroMongoose);
 const passwordFeature = require('@admin-bro/passwords');
 const argon2 = require('argon2');
 const agenda = require('./agendaJS');
+const koaBody = require("koa-body");
+const Upload = require('./upload')
 
-var i_run = 0;
-agenda.define('console log', function(job, done) {
-    console.log('Agenda successfully worked ' + i_run);
-    i_run += 1;
-    done();
-});
-
-
-(async function() {
-    await agenda.start();
-    await agenda.schedule('10 seconds', 'console log');
-})();
+// var i_run = 0;
+// agenda.define('console log', function(job, done) {
+//     console.log('Agenda successfully worked ' + i_run);
+//     i_run += 1;
+//     done();
+// });
+//
+//
+// (async function() {
+//     await agenda.start();
+//     await agenda.schedule('1 hour', 'console log');
+// })();
 
 const { buildRouter, buildAuthenticatedRouter } = require('@admin-bro/koa');
 // const adminBro = new AdminBro({
@@ -53,7 +55,7 @@ const app = new Koa();
 
 render(app, {
     root: path.join(__dirname, "views"),
-    layout: "index",
+    layout: "layout",
     viewExt: "html",
 });
 
@@ -70,6 +72,9 @@ const routerAdmin = buildRouter(adminBro, app)
 //     },
 // })
 
+app.use(koaBody(
+    { multipart: true }
+));
 
 app.use(BodyParser());
 app.use(logger());
@@ -110,7 +115,7 @@ router.post("/auth", async (ctx) => {
 router.get("users", "/users", async (ctx) => {
     const result = await axios.get("https://randomuser.me/api?results=5");
 
-    return ctx.render("index", {
+    return ctx.render("users", {
         users: result.data.results,
     });
 });
@@ -126,6 +131,13 @@ router.post("/kitten", async (ctx) => {
     ctx.body = await model.save();
 });
 
+
+router.get("/upload", async (ctx) => {
+    console.log("get upload");
+    return ctx.render("upload");
+});
+
+router.post("/upload", Upload)
 
 // Apply JWT middleware to secured router only
 securedRouter.use(jwt.errorHandler()).use(jwt.jwt());
