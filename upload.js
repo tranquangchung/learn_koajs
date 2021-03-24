@@ -1,6 +1,7 @@
 const promisePipe = require("promisepipe");
 const fs = require("fs");
 const path = require("path");
+const exec = require('child_process').exec;
 
 
 async function Upload(context, next) {
@@ -26,8 +27,25 @@ async function Upload(context, next) {
             })
         );
 
+        let extension = savefile.split('.').pop();
+        if (extension == 'mp3'){
+            savefile_convert = savefile.replace('mp3', 'wav');
+        }
+        else if (extension == 'wav'){
+            savefile_convert = savefile.replace('wav', 'mp3');
+        }
+        exec(`sox uploads/${savefile} uploads/${savefile_convert}`,
+            (error, stdout, stderr) => {
+                console.log(`stdout: ${stdout}`);
+                console.log(`stderr: ${stderr}`);
+                if (error !== null) {
+                    console.log(`exec error: ${error}`);
+                }
+            });
+
         context.body = {
-            message: "File Uploaded"
+            message: "File Uploaded \n" +
+                `Convert file: ${savefile} to ${savefile_convert}`
         };
     } catch (err) {
         console.log(err);
